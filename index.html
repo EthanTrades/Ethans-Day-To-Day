@@ -147,6 +147,16 @@ header{
 .grouphd{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
   font-weight:650;margin:16px 0 2px;padding-top:4px}
 
+/* ---------- sleep ---------- */
+.stack{display:flex;height:30px;border-radius:7px;overflow:hidden;gap:2px;background:var(--card2)}
+.stack i{display:block;height:100%;min-width:2px}
+.srcrow{display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:center;
+  padding:9px 0;border-top:1px solid var(--line)}
+.srcrow:first-of-type{border-top:none}
+.srctag{font-size:10px;padding:2px 6px;border-radius:5px;background:var(--card2);
+  border:1px solid var(--line);color:var(--ink2);font-weight:600}
+.bignum{font-size:34px;font-weight:680;letter-spacing:-.03em;line-height:1.05}
+
 /* ---------- calendar ---------- */
 .calhd{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:5px}
 .calhd span{text-align:center;font-size:10.5px;color:var(--muted);font-weight:650;letter-spacing:.03em}
@@ -172,9 +182,9 @@ header{
 nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(13,13,13,.93);
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
-.navin{max-width:660px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
-nav button{padding:9px 1px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;
-  font-size:9.5px;color:var(--muted);font-weight:560;letter-spacing:-.01em}
+.navin{max-width:660px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
+nav button{padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:9px;color:var(--muted);font-weight:560;letter-spacing:-.02em;min-width:0}
 nav button .ic{font-size:19px;line-height:1}
 nav button[aria-selected=true]{color:var(--s1)}
 
@@ -378,6 +388,78 @@ nav button[aria-selected=true]{color:var(--s1)}
   </div>
 </section>
 
+<!-- ═════════════ SLEEP ═════════════ -->
+<section id="tab-sleep" class="hide">
+  <div class="hero">
+    <div class="lbl">Last night</div>
+    <div class="big" id="slLast">—</div>
+    <div class="sub" id="slLastSub">no nights logged yet</div>
+    <div class="stack" id="slStack" style="margin-top:14px"></div>
+    <div class="legend" id="slStackLegend"></div>
+  </div>
+
+  <div class="seg" id="slRange" style="margin-top:12px">
+    <button data-d="7" aria-selected="true">7 nights</button>
+    <button data-d="30">30</button>
+    <button data-d="90">90</button>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="t">Average</div><div class="v" id="slAvg">—</div><div class="d" id="slAvgD"></div></div>
+    <div class="tile"><div class="t">Efficiency</div><div class="v" id="slEff">—</div><div class="d" id="slEffD"></div></div>
+    <div class="tile"><div class="t">HRV</div><div class="v" id="slHrv">—</div><div class="d" id="slHrvD"></div></div>
+    <div class="tile"><div class="t">Resting HR</div><div class="v" id="slRhr">—</div><div class="d" id="slRhrD"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><h2>Hours per night</h2><span class="lnk" id="slGoalLbl"></span></div>
+    <div class="chartbox" id="slChart"></div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><h2>Bed &amp; wake times</h2></div>
+    <div class="chartbox" id="slClock"></div>
+    <div id="slConsistency" style="font-size:12.5px;color:var(--muted);margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><h2>Apple Health vs Sleep Cycle</h2></div>
+    <div id="slCompare"></div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><h2>Recent nights</h2></div>
+    <div id="slList"></div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><h2>Log a night</h2></div>
+    <div class="grid2">
+      <div class="fld"><label>Night of</label><input id="snDate" type="date"></div>
+      <div class="fld"><label>Source</label><select id="snSrc">
+        <option value="manual">Manual</option>
+        <option value="apple_health">Apple Health</option>
+        <option value="sleep_cycle">Sleep Cycle</option>
+      </select></div>
+    </div>
+    <div class="grid2">
+      <div class="fld"><label>Asleep (h:mm)</label><input id="snAsleep" placeholder="7:20"></div>
+      <div class="fld"><label>In bed (h:mm)</label><input id="snBed" placeholder="7:55"></div>
+    </div>
+    <div class="grid3">
+      <div class="fld"><label>Deep</label><input id="snDeep" placeholder="1:02"></div>
+      <div class="fld"><label>REM</label><input id="snRem" placeholder="1:35"></div>
+      <div class="fld"><label>Core</label><input id="snCore" placeholder="4:15"></div>
+    </div>
+    <div class="grid3">
+      <div class="fld"><label>HRV ms</label><input id="snHrv" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>Resting HR</label><input id="snRhr" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>Quality %</label><input id="snQual" type="number" inputmode="decimal"></div>
+    </div>
+    <button class="btn ghost" id="snAdd">Save night</button>
+  </div>
+</section>
+
 <!-- ═════════════ CALENDAR ═════════════ -->
 <section id="tab-cal" class="hide">
   <div class="seg" id="calNav" style="margin-top:12px">
@@ -518,12 +600,13 @@ nav button[aria-selected=true]{color:var(--s1)}
 </main>
 
 <nav><div class="navin">
-  <button data-tab="dash" aria-selected="true"><span class="ic">◈</span>Dashboard</button>
+  <button data-tab="dash" aria-selected="true"><span class="ic">◈</span>Home</button>
   <button data-tab="money"><span class="ic">◎</span>Money</button>
   <button data-tab="worth"><span class="ic">▲</span>Worth</button>
   <button data-tab="social"><span class="ic">◐</span>Social</button>
   <button data-tab="todo"><span class="ic">☑</span>Tasks</button>
-  <button data-tab="cal"><span class="ic">▦</span>Calendar</button>
+  <button data-tab="sleep"><span class="ic">☾</span>Sleep</button>
+  <button data-tab="cal"><span class="ic">▦</span>Cal</button>
 </div></nav>
 
 <div class="sheet" id="sheet"><div class="bd"></div><div class="pn"><div class="hnd"></div><div id="sheetBody"></div></div></div>
@@ -579,10 +662,10 @@ function toast(msg){ const t=$('toast'); t.textContent=msg; t.dataset.on='1';
 /* ══════════════════ STATE ══════════════════ */
 const DB = {settings:null,categories:[],expenses:[],bills:[],billPayments:[],income:[],
             socialAccounts:[],socialDaily:[],socialPosts:[],adAccounts:[],adCampaigns:[],
-            adDaily:[],todos:[],syncRuns:[],holdings:[],networth:[],fx:[],events:[]};
+            adDaily:[],todos:[],syncRuns:[],holdings:[],networth:[],fx:[],events:[],sleep:[]};
 const UI = {tab:'dash', month:new Date(new Date().getFullYear(),new Date().getMonth(),1),
             acc:null, range:30, todoFilter:'today', scope:'month',
-            calMonth:new Date(new Date().getFullYear(),new Date().getMonth(),1), calDay:null};
+            calMonth:new Date(new Date().getFullYear(),new Date().getMonth(),1), calDay:null, slRange:7};
 
 async function loadAll(){
   const q = [
@@ -604,11 +687,12 @@ async function loadAll(){
     sb.from('networth_daily').select('*').order('date'),
     sb.from('fx_rates').select('*'),
     sb.from('events').select('*').order('on_date'),
+    sb.from('sleep_nights').select('*').order('night'),
   ];
   const r = await Promise.all(q);
   const keys = ['settings','categories','expenses','bills','billPayments','income','socialAccounts',
                 'socialDaily','socialPosts','adAccounts','adCampaigns','adDaily','todos','syncRuns',
-                'holdings','networth','fx','events'];
+                'holdings','networth','fx','events','sleep'];
   const errs = [];
   r.forEach((res,i)=>{
     if(res.error){ errs.push(keys[i]+': '+res.error.message); return; }
@@ -990,9 +1074,11 @@ function renderDash(){
   const nwCash=kindTotal('cash'), nwCrypto=kindTotal('crypto'), nwEquity=kindTotal('equity');
   const nwTot = nwCash+nwCrypto+nwEquity;
   $('dashNw').textContent = nwTot? money(nwTot,0) : '—';
-  const h30 = DB.networth.length>1 ? n2(DB.networth[Math.max(0,DB.networth.length-31)].total) : 0;
+  const nwIdx = Math.max(0, DB.networth.length-31);
+  const h30 = DB.networth.length>1 ? n2(DB.networth[nwIdx].total) : 0;
+  const nwDays = DB.networth.length>1 ? DB.networth.length-1-nwIdx : 0;
   $('dashNwD').innerHTML = h30
-    ? delta(nwTot-h30)+' <span style="color:var(--muted)">30d</span>'
+    ? delta(nwTot-h30)+` <span style="color:var(--muted)">${nwDays}d</span>`
     : (nwTot? '<span style="color:var(--muted)">liquid + invested</span>' : '');
   const nwParts=[['Cash',nwCash,C.s1],['Crypto',nwCrypto,C.s2],['Shares',nwEquity,C.s3]].filter(x=>x[1]>0);
   const nwSum = nwParts.reduce((a,x)=>a+x[1],0)||1;
@@ -1138,10 +1224,11 @@ function renderWorth(){
   $('nwVal').textContent = money(total,0);
 
   const hist = DB.networth.slice();
-  const prior = hist.length>1 ? n2(hist[Math.max(0,hist.length-31)].total) : 0;
+  const pIdx = Math.max(0,hist.length-31);
+  const prior = hist.length>1 ? n2(hist[pIdx].total) : 0;
   const d = prior? total-prior : 0;
   $('nwSub').innerHTML = prior
-    ? `${d>=0?'▲':'▼'} ${money(Math.abs(d),0)} over ${Math.min(30,hist.length-1)} days`
+    ? `${d>=0?'▲':'▼'} ${money(Math.abs(d),0)} over ${hist.length-1-pIdx} day${hist.length-1-pIdx===1?'':'s'}`
     : `${byKind('equity').length} shares · ${byKind('crypto').length} coins · tracked daily from today`;
   $('nwSub').style.color = prior ? (d>=0?'#5ed35e':'#ff8f8f') : '';
 
@@ -1395,6 +1482,164 @@ function renderTodos(){
   } else $('todoList').innerHTML = list.map(todoRow).join('');
 }
 
+/* ══════════════════ SLEEP ══════════════════ */
+/* stage colours: validated categorical slots on this surface */
+const STAGE = [
+  {k:'deep_min',  label:'Deep',  c:C.s1},
+  {k:'core_min',  label:'Core',  c:C.s3},
+  {k:'rem_min',   label:'REM',   c:C.s4},
+  {k:'awake_min', label:'Awake', c:C.s2},
+];
+const hm = m => { const x=Math.round(n2(m)); return `${Math.floor(x/60)}h ${String(x%60).padStart(2,'0')}m`; };
+const hDec = m => (n2(m)/60);
+
+const sleepPrimary = () => (DB.settings||{}).sleep_source_primary || 'apple_health';
+/* one row per night: the primary source, falling back to whatever exists */
+function nightsIn(days){
+  const from = ymd(addDays(today(), -days));
+  const byNight = new Map();
+  DB.sleep.filter(r=>r.night > from).forEach(r=>{
+    const cur = byNight.get(r.night);
+    if(!cur || (r.source===sleepPrimary() && cur.source!==sleepPrimary())) byNight.set(r.night, r);
+  });
+  return [...byNight.values()].sort((a,b)=>a.night<b.night?-1:1);
+}
+const avgOf = (rows,k) => {
+  const v = rows.map(r=>n2(r[k])).filter(x=>x>0);
+  return v.length ? v.reduce((a,b)=>a+b,0)/v.length : 0;
+};
+
+function renderSleep(){
+  [...$('slRange').children].forEach(b=>b.setAttribute('aria-selected', +b.dataset.d===UI.slRange));
+  const goal = n2((DB.settings||{}).sleep_goal_min) || 480;
+  $('slGoalLbl').textContent = 'goal ' + hm(goal);
+
+  const rows = nightsIn(UI.slRange);
+  const last = rows.length ? rows[rows.length-1] : null;
+
+  // ---- hero ----
+  if(!last){
+    $('slLast').textContent = '—';
+    $('slLastSub').textContent = 'no nights logged yet';
+    $('slStack').innerHTML=''; $('slStackLegend').innerHTML='';
+  } else {
+    $('slLast').textContent = hm(last.asleep_min);
+    const vsGoal = n2(last.asleep_min) - goal;
+    const eff = n2(last.efficiency);
+    $('slLastSub').innerHTML =
+      `${fmtDW(last.night)} · ${vsGoal>=0?'<span class="up">'+hm(Math.abs(vsGoal))+' over goal</span>'
+                                        :'<span class="down">'+hm(Math.abs(vsGoal))+' under goal</span>'}`
+      + (eff? ` · ${(eff*100).toFixed(0)}% efficient` : '');
+    const parts = STAGE.map(s=>({...s, v:n2(last[s.k])})).filter(s=>s.v>0);
+    if(parts.length){
+      const tot = parts.reduce((a,p)=>a+p.v,0);
+      $('slStack').innerHTML = parts.map(p=>`<i style="width:${p.v/tot*100}%;background:${p.c}"></i>`).join('');
+      $('slStackLegend').innerHTML = parts.map(p=>
+        `<span><i style="background:${p.c}"></i>${p.label} ${hm(p.v)}</span>`).join('');
+    } else {
+      $('slStack').innerHTML = `<i style="width:100%;background:${C.s1}"></i>`;
+      $('slStackLegend').innerHTML = '<span style="color:var(--muted)">no stage breakdown for this night</span>';
+    }
+  }
+
+  // ---- tiles, this window vs the one before ----
+  const prev = (()=> {
+    const f = ymd(addDays(today(), -UI.slRange*2)), t = ymd(addDays(today(), -UI.slRange));
+    return DB.sleep.filter(r=>r.night>f && r.night<=t && r.source===sleepPrimary());
+  })();
+  const aAvg = avgOf(rows,'asleep_min'), pAvg = avgOf(prev,'asleep_min');
+  $('slAvg').textContent = aAvg? hm(aAvg):'—';
+  $('slAvgD').innerHTML  = pAvg? deltaPct(aAvg,pAvg) : `<span style="color:var(--muted)">${rows.length} night${rows.length===1?'':'s'}</span>`;
+  const aEff = avgOf(rows,'efficiency'), pEff = avgOf(prev,'efficiency');
+  $('slEff').textContent = aEff? (aEff*100).toFixed(0)+'%':'—';
+  $('slEffD').innerHTML  = pEff? deltaPct(aEff,pEff):'';
+  const aHrv = avgOf(rows,'hrv_ms'), pHrv = avgOf(prev,'hrv_ms');
+  $('slHrv').textContent = aHrv? aHrv.toFixed(0)+' ms':'—';
+  $('slHrvD').innerHTML  = pHrv? deltaPct(aHrv,pHrv):'';
+  const aRhr = avgOf(rows,'resting_hr'), pRhr = avgOf(prev,'resting_hr');
+  $('slRhr').textContent = aRhr? aRhr.toFixed(0)+' bpm':'—';
+  $('slRhrD').innerHTML  = pRhr? deltaPct(aRhr,pRhr,true):'';   // lower is better
+
+  // ---- hours per night ----
+  barChart($('slChart'), rows.map(r=>({x:r.night, y:hDec(r.asleep_min)})),
+    {color:C.s1, fmt:v=>v.toFixed(1)+'h', suffix:'asleep', h:120});
+
+  // ---- bed & wake consistency ----
+  const clock = rows.filter(r=>r.bedtime && r.wake_time).map(r=>{
+    const b = new Date(r.bedtime), w = new Date(r.wake_time);
+    let bh = b.getHours()+b.getMinutes()/60; if(bh < 12) bh += 24;   // 11pm=23, 1am=25
+    return {x:r.night, bed:bh, wake:w.getHours()+w.getMinutes()/60};
+  });
+  if(clock.length < 2){
+    if($('slClock')._cleanup) $('slClock')._cleanup();
+    $('slClock').innerHTML = '<div class="empty">Needs a couple of nights with bed and wake times</div>';
+    $('slConsistency').textContent = '';
+  } else {
+    lineChart($('slClock'), clock.map(c=>({x:c.x, y:c.bed})),
+      {color:C.s4, h:110, fmt:v=>{ const t=v>=24?v-24:v;
+        return `${String(Math.floor(t)).padStart(2,'0')}:${String(Math.round((t%1)*60)).padStart(2,'0')}`; },
+       suffix:'to bed'});
+    const sd = a => { const m=a.reduce((x,y)=>x+y,0)/a.length;
+      return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/a.length); };
+    const bedSd = sd(clock.map(c=>c.bed))*60, wakeSd = sd(clock.map(c=>c.wake))*60;
+    $('slConsistency').innerHTML =
+      `Bedtime swings ±${Math.round(bedSd)} min, wake ±${Math.round(wakeSd)} min. `
+      + (bedSd > 60 ? '<span style="color:#f5c453">An irregular bedtime costs more than a short one.</span>'
+                    : '<span class="up">That is a consistent schedule.</span>');
+  }
+
+  // ---- source comparison ----
+  const both = {};
+  DB.sleep.forEach(r=>{ (both[r.night] = both[r.night] || {})[r.source] = r; });
+  const pairs = Object.entries(both).filter(([,v])=>v.apple_health && v.sleep_cycle)
+                  .sort((a,b)=>a[0]<b[0]?1:-1).slice(0,6);
+  $('slCompare').innerHTML = pairs.length ? pairs.map(([night,v])=>{
+    const d = n2(v.apple_health.asleep_min) - n2(v.sleep_cycle.asleep_min);
+    return `<div class="srcrow">
+      <div class="nm"><b>${fmtD(night)}</b><small>${Math.abs(d)} min apart</small></div>
+      <span><span class="srctag">Health</span> ${hm(v.apple_health.asleep_min)}</span>
+      <span><span class="srctag">Cycle</span> ${hm(v.sleep_cycle.asleep_min)}</span></div>`;
+  }).join('') : '<div class="empty">Nights logged by both sources will line up here</div>';
+
+  // ---- recent nights ----
+  const recent = DB.sleep.slice().sort((a,b)=>a.night<b.night?1:-1).slice(0,14);
+  $('slList').innerHTML = recent.length ? recent.map(r=>{
+    const short = n2(r.asleep_min) < goal;
+    return `<div class="row">
+      <span class="cdot" style="background:${short?C.s2:C.good}"></span>
+      <div class="nm"><b>${fmtDW(r.night)}</b><small>${
+        r.source==='apple_health'?'Apple Health':r.source==='sleep_cycle'?'Sleep Cycle':'manual'}${
+        r.efficiency? ' · '+(n2(r.efficiency)*100).toFixed(0)+'% eff':''}${
+        r.hrv_ms? ' · HRV '+n2(r.hrv_ms).toFixed(0):''}</small></div>
+      <span class="amt">${hm(r.asleep_min)}</span>
+      <button class="xbtn" data-del-sleep="${r.id}">×</button></div>`;
+  }).join('') : '<div class="empty">Nothing logged yet</div>';
+}
+
+/* "7:20" / "7h 20m" / "440" -> minutes */
+function parseHM(v){
+  const s = String(v||'').trim(); if(!s) return null;
+  let m = s.match(/^(\d+)\s*:\s*(\d{1,2})$/);            if(m) return +m[1]*60 + +m[2];
+  m = s.match(/^(\d+(?:\.\d+)?)\s*h(?:\s*(\d+)\s*m?)?$/i); if(m) return Math.round(+m[1]*60) + (+(m[2]||0));
+  const n = parseFloat(s); return Number.isFinite(n) ? Math.round(n) : null;
+}
+
+async function addSleepNight(){
+  const asleep = parseHM($('snAsleep').value), inbed = parseHM($('snBed').value);
+  if(!asleep && !inbed) return toast('Enter how long you slept');
+  const rec = {night: $('snDate').value || ymd(addDays(today(),-1)), source: $('snSrc').value,
+    asleep_min: asleep, in_bed_min: inbed,
+    deep_min: parseHM($('snDeep').value), rem_min: parseHM($('snRem').value),
+    core_min: parseHM($('snCore').value),
+    hrv_ms: parseFloat($('snHrv').value)||null, resting_hr: parseFloat($('snRhr').value)||null,
+    quality_pct: parseFloat($('snQual').value)||null,
+    efficiency: (asleep && inbed) ? +(asleep/inbed).toFixed(4) : null,
+    updated_at: new Date().toISOString()};
+  Object.keys(rec).forEach(k=>{ if(rec[k]===null) delete rec[k]; });
+  await run(()=>sb.from('sleep_nights').upsert(rec,{onConflict:'night,source'}), 'Night saved');
+  ['snAsleep','snBed','snDeep','snRem','snCore','snHrv','snRhr','snQual'].forEach(k=>$(k).value='');
+}
+
 /* ══════════════════ CALENDAR ══════════════════ */
 function renderCal(){
   const y=UI.calMonth.getFullYear(), m=UI.calMonth.getMonth();
@@ -1615,9 +1860,9 @@ async function doSync(){
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   UI.tab=b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected', x===b));
-  ['dash','money','worth','social','todo','cal'].forEach(t=>$('tab-'+t).classList.toggle('hide', t!==UI.tab));
+  ['dash','money','worth','social','todo','cal','sleep'].forEach(t=>$('tab-'+t).classList.toggle('hide', t!==UI.tab));
   $('pageTitle').textContent = {dash:'Dashboard',money:'Money',worth:'Net worth',social:'Social',
-                                todo:'Tasks',cal:'Calendar'}[UI.tab];
+                                todo:'Tasks',cal:'Calendar',sleep:'Sleep'}[UI.tab];
   window.scrollTo(0,0); render();
 });
 $('goTodos').onclick = ()=>document.querySelector('nav button[data-tab=todo]').click();
@@ -1652,6 +1897,7 @@ document.addEventListener('click', e=>{
   const dt  =e.target.closest('[data-del-todo]');if(dt)  return run(()=>sb.from('todos').delete().eq('id',dt.dataset.delTodo),'Deleted');
   const hd  =e.target.closest('[data-hold]');   if(hd)   return editHolding(hd.dataset.hold);
   const dv  =e.target.closest('[data-del-ev]'); if(dv)   return run(()=>sb.from('events').delete().eq('id',dv.dataset.delEv),'Removed');
+  const ds  =e.target.closest('[data-del-sleep]');if(ds)  return run(()=>sb.from('sleep_nights').delete().eq('id',ds.dataset.delSleep),'Removed');
 });
 
 $('setSave').onclick = async()=>{
@@ -1661,6 +1907,10 @@ $('setSave').onclick = async()=>{
     pay_amount:parseFloat($('setAmt').value)||0, monthly_goal:parseFloat($('setGoal').value)||0,
     updated_at:new Date().toISOString()}).eq('id',1), 'Pay cycle saved');
 };
+
+$('slRange').onclick = e=>{ const b=e.target.closest('[data-d]'); if(!b) return;
+  UI.slRange=+b.dataset.d; renderSleep(); };
+$('snAdd').onclick = addSleepNight;
 
 $('cPrev').onclick  = ()=>{ UI.calMonth=new Date(UI.calMonth.getFullYear(),UI.calMonth.getMonth()-1,1); UI.calDay=null; renderCal(); };
 $('cNext').onclick  = ()=>{ UI.calMonth=new Date(UI.calMonth.getFullYear(),UI.calMonth.getMonth()+1,1); UI.calDay=null; renderCal(); };
@@ -1777,12 +2027,14 @@ function render(){
   if(UI.tab==='social') renderSocial();
   if(UI.tab==='todo')   renderTodos();
   if(UI.tab==='cal')    renderCal();
+  if(UI.tab==='sleep')  renderSleep();
 }
 
 (async function boot(){
   $('exDate').value = ymd(today());
   $('sdDate').value = ymd(today());
   $('evDate').value = ymd(today());
+  $('snDate').value = ymd(addDays(today(),-1));
   const errs = await loadAll();
   $('exCat').innerHTML = catOptions(DB.categories.find(c=>c.name==='Groceries')?.id);
   if(errs.length) toast('Some data failed to load — check console');
