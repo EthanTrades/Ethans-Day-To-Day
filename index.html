@@ -391,7 +391,7 @@ nav button[aria-selected=true]{color:var(--s1)}
 <!-- ═════════════ SLEEP ═════════════ -->
 <section id="tab-sleep" class="hide">
   <div class="hero">
-    <div class="lbl">Last night</div>
+    <div class="lbl" id="slHeroLbl">Last night</div>
     <div class="big" id="slLast">—</div>
     <div class="sub" id="slLastSub">no nights logged yet</div>
     <div class="stack" id="slStack" style="margin-top:14px"></div>
@@ -1504,6 +1504,10 @@ function nightsIn(days){
   });
   return [...byNight.values()].sort((a,b)=>a.night<b.night?-1:1);
 }
+/* Only compare when both windows actually have numbers - an empty window is
+   not a 100% improvement. */
+const delta2 = (now,prev,lowerBetter) =>
+  (now>0 && prev>0) ? deltaPct(now,prev,lowerBetter) : '';
 const avgOf = (rows,k) => {
   const v = rows.map(r=>n2(r[k])).filter(x=>x>0);
   return v.length ? v.reduce((a,b)=>a+b,0)/v.length : 0;
@@ -1519,10 +1523,13 @@ function renderSleep(){
 
   // ---- hero ----
   if(!last){
+    $('slHeroLbl').textContent = 'Last night';
     $('slLast').textContent = '—';
     $('slLastSub').textContent = 'no nights logged yet';
     $('slStack').innerHTML=''; $('slStackLegend').innerHTML='';
   } else {
+    const ago = Math.round((today() - parseD(last.night)) / 86400000);
+    $('slHeroLbl').textContent = ago<=1 ? 'Last night' : ago+' nights ago';
     $('slLast').textContent = hm(last.asleep_min);
     const vsGoal = n2(last.asleep_min) - goal;
     const eff = n2(last.efficiency);
@@ -1549,16 +1556,18 @@ function renderSleep(){
   })();
   const aAvg = avgOf(rows,'asleep_min'), pAvg = avgOf(prev,'asleep_min');
   $('slAvg').textContent = aAvg? hm(aAvg):'—';
-  $('slAvgD').innerHTML  = pAvg? deltaPct(aAvg,pAvg) : `<span style="color:var(--muted)">${rows.length} night${rows.length===1?'':'s'}</span>`;
+  // always say how many nights it averaged - 4 logged nights in a 30-night window is not a 30-night average
+  $('slAvgD').innerHTML  = (delta2(aAvg,pAvg)? delta2(aAvg,pAvg)+' ' : '')
+    + `<span style="color:var(--muted)">${rows.length} night${rows.length===1?'':'s'}</span>`;
   const aEff = avgOf(rows,'efficiency'), pEff = avgOf(prev,'efficiency');
   $('slEff').textContent = aEff? (aEff*100).toFixed(0)+'%':'—';
-  $('slEffD').innerHTML  = pEff? deltaPct(aEff,pEff):'';
+  $('slEffD').innerHTML  = delta2(aEff,pEff);
   const aHrv = avgOf(rows,'hrv_ms'), pHrv = avgOf(prev,'hrv_ms');
   $('slHrv').textContent = aHrv? aHrv.toFixed(0)+' ms':'—';
-  $('slHrvD').innerHTML  = pHrv? deltaPct(aHrv,pHrv):'';
+  $('slHrvD').innerHTML  = delta2(aHrv,pHrv);
   const aRhr = avgOf(rows,'resting_hr'), pRhr = avgOf(prev,'resting_hr');
   $('slRhr').textContent = aRhr? aRhr.toFixed(0)+' bpm':'—';
-  $('slRhrD').innerHTML  = pRhr? deltaPct(aRhr,pRhr,true):'';   // lower is better
+  $('slRhrD').innerHTML  = delta2(aRhr,pRhr,true);   // lower is better
 
   // ---- hours per night ----
   barChart($('slChart'), rows.map(r=>({x:r.night, y:hDec(r.asleep_min)})),
