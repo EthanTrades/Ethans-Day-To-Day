@@ -490,7 +490,7 @@ nav button:active .ic{transform:scale(.9)}
   <div class="card">
     <div class="chead"><h2>Log a night</h2></div>
     <div class="grid2">
-      <div class="fld"><label>Night of</label><input id="snDate" type="date"></div>
+      <div class="fld"><label>Night of (evening you went to bed)</label><input id="snDate" type="date"></div>
       <div class="fld"><label>Source</label><select id="snSrc">
         <option value="manual">Manual</option>
         <option value="apple_health">Apple Health</option>
@@ -1546,6 +1546,17 @@ const STAGE = [
   {k:'awake_min', label:'Awake', c:C.s2},
 ];
 const hm = m => { const x=Math.round(n2(m)); return `${Math.floor(x/60)}h ${String(x%60).padStart(2,'0')}m`; };
+/* A night is stored under the EVENING you went to bed, so the night you just woke
+   from carries yesterday's date. Correct internally, but it makes you work out
+   which night a row means. Show the span instead - no arithmetic. */
+function fmtNight(n){
+  const a = parseD(n), b = addDays(a,1);
+  const dw = d => d.toLocaleDateString('en-AU',{weekday:'short'});
+  const mo = d => d.toLocaleDateString('en-AU',{month:'short'});
+  return a.getMonth()===b.getMonth()
+    ? `${dw(a)} ${a.getDate()} → ${dw(b)} ${b.getDate()} ${mo(b)}`
+    : `${dw(a)} ${a.getDate()} ${mo(a)} → ${dw(b)} ${b.getDate()} ${mo(b)}`;
+}
 const hDec = m => (n2(m)/60);
 
 const sleepPrimary = () => (DB.settings||{}).sleep_source_primary || 'apple_health';
@@ -1589,9 +1600,9 @@ function renderSleep(){
     const vsGoal = n2(last.asleep_min) - goal;
     const eff = n2(last.efficiency);
     $('slLastSub').innerHTML =
-      `${fmtDW(last.night)} · ${vsGoal>=0?'<span class="up">'+hm(Math.abs(vsGoal))+' over goal</span>'
+      `${fmtNight(last.night)} · ${vsGoal>=0?'<span class="up">'+hm(Math.abs(vsGoal))+' over goal</span>'
                                         :'<span class="down">'+hm(Math.abs(vsGoal))+' under goal</span>'}`
-      + (eff? ` · ${(eff*100).toFixed(0)}% efficient` : '');
+      + (eff? ` · ${(eff*100).toFixed(0)}% eff` : '');
     const parts = STAGE.map(s=>({...s, v:n2(last[s.k])})).filter(s=>s.v>0);
     if(parts.length){
       const tot = parts.reduce((a,p)=>a+p.v,0);
@@ -1660,7 +1671,7 @@ function renderSleep(){
   $('slCompare').innerHTML = pairs.length ? pairs.map(([night,v])=>{
     const d = n2(v.apple_health.asleep_min) - n2(v.sleep_cycle.asleep_min);
     return `<div class="srcrow">
-      <div class="nm"><b>${fmtD(night)}</b><small>${Math.abs(d)} min apart</small></div>
+      <div class="nm"><b>${fmtNight(night)}</b><small>${Math.abs(d)} min apart</small></div>
       <span><span class="srctag">Health</span> ${hm(v.apple_health.asleep_min)}</span>
       <span><span class="srctag">Cycle</span> ${hm(v.sleep_cycle.asleep_min)}</span></div>`;
   }).join('') : '<div class="empty">Nights logged by both sources will line up here</div>';
@@ -1671,7 +1682,7 @@ function renderSleep(){
     const short = n2(r.asleep_min) < goal;
     return `<div class="row">
       <span class="cdot" style="background:${short?C.s2:C.good}"></span>
-      <div class="nm"><b>${fmtDW(r.night)}</b><small>${
+      <div class="nm"><b>${fmtNight(r.night)}</b><small>${
         r.source==='apple_health'?'Apple Health':r.source==='sleep_cycle'?'Sleep Cycle':'manual'}${
         r.efficiency? ' · '+(n2(r.efficiency)*100).toFixed(0)+'% eff':''}${
         r.hrv_ms? ' · HRV '+n2(r.hrv_ms).toFixed(0):''}</small></div>
